@@ -63,6 +63,7 @@ img {
   background: aliceblue;
   opacity: 1;
   z-index: 100;
+  animation: pulse 2s ease infinite, slide-in 1.5s ease;
 }
 
 .game-completed button {
@@ -186,5 +187,31 @@ img {
   }
   85% {
     opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }
