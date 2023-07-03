@@ -3,67 +3,17 @@
     {
       "id": 1,
       "name": "Tường",
-      "timePlayed": 7
+      "timePlayed": 5
     },
     {
       "id": 2,
       "name": "Nam",
-      "timePlayed": 10
+      "timePlayed": 9
     },
     {
       "id": 3,
       "name": "Khoa",
       "timePlayed": 11
-    },
-    {
-      "name": "cd",
-      "timePlayed": 37,
-      "id": 4
-    },
-    {
-      "name": "C",
-      "timePlayed": 31,
-      "id": 5
-    },
-    {
-      "name": "ac",
-      "timePlayed": 31,
-      "id": 6
-    },
-    {
-      "name": "ac",
-      "timePlayed": 44,
-      "id": 7
-    },
-    {
-      "name": "acs",
-      "timePlayed": 23,
-      "id": 8
-    },
-    {
-      "name": "acs",
-      "timePlayed": 0,
-      "id": 9
-    },
-    {
-      "name": "ac",
-      "timePlayed": 22,
-      "id": 10
-    },
-    {
-      "name": "bbb",
-      "timePlayed": 23,
-      "id": 11
-    },
-    {
-      "name": "ac",
-      "timePlayed": 23,
-      "id": 12
-    },
-    {
-      "name": "nam",
-      "timePlayed": 40,
-      "id": 13
     }
   ]
 }
