@@ -3,42 +3,22 @@
     {
       "id": 1,
       "name": "Tường",
-      "timePlayed": 17
+      "timePlayed": 7
     },
     {
       "id": 2,
       "name": "Nam",
-      "timePlayed": 20
+      "timePlayed": 10
     },
     {
       "id": 3,
       "name": "Khoa",
-      "timePlayed": 23
+      "timePlayed": 11
     },
     {
-      "name": "ssss",
-      "timePlayed": 29,
+      "name": "cd",
+      "timePlayed": 37,
       "id": 4
-    },
-    {
-      "name": "ads",
-      "timePlayed": 33,
-      "id": 5
-    },
-    {
-      "name": "ab",
-      "timePlayed": 17,
-      "id": 6
-    },
-    {
-      "name": "ca",
-      "timePlayed": 161,
-      "id": 7
-    },
-    {
-      "name": "ca",
-      "timePlayed": 161,
-      "id": 8
     }
   ]
 }

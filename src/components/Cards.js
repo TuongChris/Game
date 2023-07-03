@@ -11,22 +11,22 @@ import axios from "axios";
 
 export default function Cards() {
   const value = [
-    { id: 0, name: "Dog Funny", status: "", img: "../image/qua-bo.jpg" },
-    { id: 0, name: "Dog Funny", status: "", img: "../image/qua-bo.jpg" },
-    { id: 1, name: "Dog Cute", status: "", img: "../image/qua-cam.jpg" },
-    { id: 1, name: "Dog Cute", status: "", img: "../image/qua-cam.jpg" },
-    { id: 2, name: "Meo Funny", status: "", img: "../image/qua-chuoi.jpg" },
-    { id: 2, name: "Meo Funny", status: "", img: "../image/qua-chuoi.jpg" },
-    { id: 3, name: "Meo Cute", status: "", img: "../image/qua-dau-tay.jpg" },
-    { id: 3, name: "Meo Cute", status: "", img: "../image/qua-dau-tay.jpg" },
-    { id: 4, name: "Meo Tim", status: "", img: "../image/qua-dua-hau.jpg" },
-    { id: 4, name: "Meo Tim", status: "", img: "../image/qua-dua-hau.jpg" },
-    { id: 5, name: "Meo Now", status: "", img: "../image/qua-gac.jpg" },
-    { id: 5, name: "Meo Now", status: "", img: "../image/qua-gac.jpg" },
-    { id: 6, name: "Meo Man", status: "", img: "../image/qua-nhan.jpg" },
-    { id: 6, name: "Meo Man", status: "", img: "../image/qua-nhan.jpg" },
-    { id: 7, name: "Meo Zoa", status: "", img: "../image/qua-xoai.jpg" },
-    { id: 7, name: "Meo Zoa", status: "", img: "../image/qua-xoai.jpg" },
+    { id: 0, name: "Qua Bo", status: "", img: "../image/qua-bo.jpg" },
+    { id: 0, name: "Qua Bo", status: "", img: "../image/qua-bo.jpg" },
+    { id: 1, name: "Qua Cam", status: "", img: "../image/qua-cam.jpg" },
+    { id: 1, name: "Qua Cam", status: "", img: "../image/qua-cam.jpg" },
+    { id: 2, name: "Qua Chuoi", status: "", img: "../image/qua-chuoi.jpg" },
+    { id: 2, name: "Qua Chuoi", status: "", img: "../image/qua-chuoi.jpg" },
+    { id: 3, name: "Qua Dau Tay", status: "", img: "../image/qua-dau-tay.jpg" },
+    { id: 3, name: "Qua Dau Tay", status: "", img: "../image/qua-dau-tay.jpg" },
+    { id: 4, name: "Qua Dưa Hau", status: "", img: "../image/qua-dua-hau.jpg" },
+    { id: 4, name: "Qua Dưa Hau", status: "", img: "../image/qua-dua-hau.jpg" },
+    { id: 5, name: "Qua Gac", status: "", img: "../image/qua-gac.jpg" },
+    { id: 5, name: "Qua Gac", status: "", img: "../image/qua-gac.jpg" },
+    { id: 6, name: "Qua Nhan", status: "", img: "../image/qua-nhan.jpg" },
+    { id: 6, name: "Qua Nhan", status: "", img: "../image/qua-nhan.jpg" },
+    { id: 7, name: "Qua Xoai", status: "", img: "../image/qua-xoai.jpg" },
+    { id: 7, name: "Qua Xoai", status: "", img: "../image/qua-xoai.jpg" },
   ];
 
   const [cards, setCards] = useState(value.sort(() => Math.random() - 0.5));
