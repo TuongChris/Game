@@ -33,7 +33,7 @@ export default function Cards() {
   const [previousCardState, setPreviousCardState] = useState(-1);
   const previousIndex = useRef(-1);
   const [isGameCompleted, setIsGameCompleted] = useState(false);
-  const [Sorce, setSorce] = useState(0);
+  const [ConDition, setConDition] = useState(0);
   const [playerName, setPlayerName] = useState("");
   const [isNameEntered, setIsNameEntered] = useState(false);
   const [playAgain, setPlayAgain] = useState(false);
@@ -62,24 +62,6 @@ export default function Cards() {
     );
   }, [isGameCompleted, isGameStarted, finalGameDuration, elapsedTime]);
 
-  const handlePlayAgain = () => {
-    setCards(value.sort(() => Math.random() - 0.5));
-    setPreviousCardState(-1);
-    previousIndex.current = -1;
-    setSorce(0);
-    setIsGameCompleted(false);
-    setPlayAgain(false);
-    setTimer(0);
-    setIsRestarting(true);
-    setElapsedTime(0);
-    setRestartTimer(true);
-    setIsGameStarted(true);
-    setIsLoggedOut(false);
-    setIsTimerRunning(true);
-    setGameDuration(timer);
-    setClickCount(0);
-  };
-
   const handleGameComplete = () => {
     savePlayerData(playerName)
       .then((response) => {
@@ -92,6 +74,7 @@ export default function Cards() {
         console.error("Lỗi khi gửi dữ liệu người chơi:", error);
       });
   };
+
   useEffect(() => {
     if (isGameCompleted) {
       savePlayerData(playerName)
@@ -106,16 +89,6 @@ export default function Cards() {
         });
     }
   }, [isGameCompleted, playerName]);
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/players")
-      .then((response) => {
-        setPlayers(response.data);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi truy xuất dữ liệu người chơi:", error);
-      });
-  }, []);
 
   const savePlayerData = (name) => {
     const data = {
@@ -124,6 +97,7 @@ export default function Cards() {
     };
     return axios.post("http://localhost:3000/players", data);
   };
+
   useEffect(() => {
     axios
       .get("http://localhost:3000/players")
@@ -135,10 +109,12 @@ export default function Cards() {
         console.error("Lỗi khi truy xuất dữ liệu người chơi:", error);
       });
   }, [displayLimit]);
+
   const combinedPlayers = sortedPlayers.map((player, index) => ({
     ...player,
     rank: index + 1,
   }));
+
   const rankingRows = combinedPlayers.slice(0, 10).map((player) => (
     <tr key={player.id} className="ranking-head">
       <td className="ranking-number delay-ranking">{player.rank}</td>
@@ -150,6 +126,175 @@ export default function Cards() {
       </td>
     </tr>
   ));
+
+  const sortPlayersByTimePlayed = () => {
+    const sorted = [...players].sort((a, b) => a.timePlayed - b.timePlayed);
+    setSortedPlayers(sorted);
+  };
+
+  useEffect(() => {
+    sortPlayersByTimePlayed();
+  }, [players]);
+
+  const sortedPlayersWithRank = sortedPlayers.map((player, index) => ({
+    ...player,
+    rank: index + 1,
+  }));
+
+  const handleLoadMore = () => {
+    sortPlayersByTimePlayed();
+    setDisplayLimit(displayLimit + 10);
+  };
+
+  const matchCheck = (currentCard) => {
+    if (cards[currentCard].id === cards[previousCardState].id) {
+      cards[previousCardState].status = "active matched";
+      cards[currentCard].status = "active matched";
+      setConDition((e) => e + 1);
+      setPreviousCardState(-1);
+    } else {
+      cards[currentCard].status = "active";
+      setCards([...cards]);
+      setPreviousCardState(currentCard);
+
+      const allMatched = cards.every(
+        (card) => card.status === "active matched"
+      );
+      if (allMatched) {
+        setIsGameCompleted(true);
+      } else {
+        setTimeout(() => {
+          cards[currentCard].status = "unmatch";
+          cards[previousCardState].status = "unmatch";
+          setCards([...cards]);
+          setPreviousCardState(-1);
+        }, 300);
+      }
+    }
+  };
+
+  const clickHandler = (index) => {
+    if (index !== previousIndex.current) {
+      if (cards[index].status === "active matched") {
+        alert("Thẻ đã được kết hợp");
+      } else {
+        if (previousCardState === -1) {
+          previousIndex.current = index;
+          cards[index].status = "active";
+          setCards([...cards]);
+          setPreviousCardState(index);
+        } else {
+          matchCheck(index);
+          previousIndex.current = -1;
+          setClickCount((prevCount) => prevCount + 1);
+        }
+      }
+    } else {
+      alert("Thẻ đã được chọn");
+    }
+  };
+
+  useEffect(() => {
+    updateGameDuration();
+  }, [isGameCompleted]);
+
+  useEffect(() => {
+    const matchedCards = cards.filter(
+      (card) => card.status === "active matched"
+    );
+    if (matchedCards.length === cards.length) {
+      setIsGameCompleted(true);
+    }
+  }, [cards]);
+
+  useEffect(() => {
+    if (ConDition === 8) setIsGameCompleted(true);
+  }, [ConDition]);
+
+  useEffect(() => {
+    if (isTimerRunning && !isGameCompleted) {
+      const intervalId = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
+      }, 1000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+    if (isRestarting) {
+      setFinalGameDuration(timer);
+      setIsRestarting(false);
+    }
+    if (restartTimer) {
+      setTimer(0);
+      setElapsedTime(0);
+      setRestartTimer(false);
+    }
+  }, [isTimerRunning, isGameCompleted, isRestarting, timer, restartTimer]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      setClickCount(0);
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  const handlePlayAgain = () => {
+    setCards(value.sort(() => Math.random() - 0.5));
+    setPreviousCardState(-1);
+    previousIndex.current = -1;
+    setConDition(0);
+    setIsGameCompleted(false);
+    setPlayAgain(false);
+    setTimer(0);
+    setIsRestarting(true);
+    setElapsedTime(0);
+    setRestartTimer(true);
+    setIsGameStarted(true);
+    setIsLoggedOut(false);
+    setIsTimerRunning(true);
+    setGameDuration(timer);
+    setClickCount(0);
+  };
+
+  const handleNameSubmit = () => {
+    if (playerName.trim() !== "") {
+      setIsNameEntered(true);
+      setIsGameStarted(true);
+      previousIndex.current = -1;
+      setIsTimerRunning(true);
+      setIsLoggedOut(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedOut(true);
+    setIsNameEntered(false);
+    setIsGameStarted(false);
+    setIsGameCompleted(false);
+    setTimer(0);
+    setIsTimerRunning(false);
+    setIsRestarting(false);
+    setElapsedTime(0);
+    setFinalGameDuration(0);
+    setRestartTimer(false);
+  };
+
+  const handleGoBack = () => {
+    setIsNameEntered(false);
+    setPlayAgain(false);
+    setIsLoggedOut(false);
+  };
+
+  const updateGameDuration = () => {
+    if (isGameCompleted) {
+      setFinalGameDuration(timer);
+    }
+  };
+
   const leaderBoard = (
     <>
       {!isNameEntered && !playAgain && !isLoggedOut && (
@@ -179,146 +324,6 @@ export default function Cards() {
       )}
     </>
   );
-  const sortPlayersByTimePlayed = () => {
-    const sorted = [...players].sort((a, b) => a.timePlayed - b.timePlayed);
-    setSortedPlayers(sorted);
-  };
-  useEffect(() => {
-    sortPlayersByTimePlayed();
-  }, [players]);
-  const sortedPlayersWithRank = sortedPlayers.map((player, index) => ({
-    ...player,
-    rank: index + 1,
-  }));
-  const handleLoadMore = () => {
-    sortPlayersByTimePlayed();
-    setDisplayLimit(displayLimit + 10);
-  };
-
-  const matchCheck = (currentCard) => {
-    if (cards[currentCard].id === cards[previousCardState].id) {
-      cards[previousCardState].status = "active matched";
-      cards[currentCard].status = "active matched";
-      setSorce((e) => e + 1);
-      setPreviousCardState(-1);
-    } else {
-      cards[currentCard].status = "active";
-      setCards([...cards]);
-      setPreviousCardState(currentCard);
-
-      const allMatched = cards.every(
-        (card) => card.status === "active matched"
-      );
-      if (allMatched) {
-        setIsGameCompleted(true);
-      } else {
-        setTimeout(() => {
-          cards[currentCard].status = "unmatch";
-          cards[previousCardState].status = "unmatch";
-          setCards([...cards]);
-          setPreviousCardState(-1);
-        }, 300);
-      }
-    }
-  };
-  const clickhandler = (index) => {
-    if (index !== previousIndex.current) {
-      if (cards[index].status === "active matched") {
-        alert("Thẻ đã được kết hợp");
-      } else {
-        if (previousCardState === -1) {
-          previousIndex.current = index;
-          cards[index].status = "active";
-          setCards([...cards]);
-          setPreviousCardState(index);
-        } else {
-          matchCheck(index);
-          previousIndex.current = -1;
-          setClickCount((prevCount) => prevCount + 1);
-        }
-      }
-    } else {
-      alert("Thẻ đã được chọn");
-    }
-  };
-  const updateGameDuration = () => {
-    if (isGameCompleted) {
-      setFinalGameDuration(timer);
-    }
-  };
-  useEffect(() => {
-    updateGameDuration();
-  }, [isGameCompleted]);
-
-  useEffect(() => {
-    const matchedCards = cards.filter(
-      (card) => card.status === "active matched"
-    );
-    if (matchedCards.length === cards.length) {
-      setIsGameCompleted(true);
-    }
-  }, [cards]);
-
-  const handleNameSubmit = () => {
-    if (playerName.trim() !== "") {
-      setIsNameEntered(true);
-      setIsGameStarted(true);
-      previousIndex.current = -1;
-      setIsTimerRunning(true);
-      setIsLoggedOut(false);
-    }
-  };
-  const handleLogout = () => {
-    setIsLoggedOut(true);
-    setIsNameEntered(false);
-    setIsGameStarted(false);
-    setIsGameCompleted(false);
-    setTimer(0);
-    setIsTimerRunning(false);
-    setIsRestarting(false);
-    setElapsedTime(0);
-    setFinalGameDuration(0);
-    setRestartTimer(false);
-  };
-
-  useEffect(() => {
-    if (Sorce === 8) setIsGameCompleted(true);
-  }, [Sorce]);
-  useEffect(() => {
-    if (isTimerRunning && !isGameCompleted) {
-      const intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
-        setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
-      }, 1000);
-      return () => {
-        clearInterval(intervalId);
-      };
-    }
-    if (isRestarting) {
-      setFinalGameDuration(timer);
-      setIsRestarting(false);
-    }
-    if (restartTimer) {
-      setTimer(0);
-      setElapsedTime(0);
-      setRestartTimer(false);
-    }
-  }, [isTimerRunning, isGameCompleted, isRestarting, timer, restartTimer]);
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      setClickCount(0);
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
-  const handleGoBack = () => {
-    setIsNameEntered(false);
-    setPlayAgain(false);
-    setIsLoggedOut(false);
-  };
 
   return (
     <>
@@ -409,7 +414,7 @@ export default function Cards() {
                     key={index}
                     card={card}
                     index={index}
-                    clickhandler={clickhandler}
+                    clickHandler={clickHandler}
                   />
                 );
               })}
