@@ -1,6 +1,5 @@
 import React from "react";
 import Cell from "./Cell";
-import { calculaWinner } from "./helper";
 
 const Board = (props) => {
   return (
